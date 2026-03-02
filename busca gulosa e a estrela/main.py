@@ -13,13 +13,6 @@
 
 # Enviar o código pelo Moodle para ser analisado.
 
-
-class Cidade:
-    def __init__(self, nome, distancia, visinhos):
-        self.nome = nome
-        self.distancia = distancia
-        self.visinhos = visinhos
-
 grafo = [
     ("Arad", 366, ["Zerind", "Sibiu", "Timisoara"]),
     ("Bucharest", 0, ["Urziceni", "Pitesti", "Giurgiu", "Fagaras"]),
@@ -43,11 +36,24 @@ grafo = [
     ("Zerind", 374, ["Oradea", "Arad"])
 ]
 
-#criando um dicionario para armazenar as cidades e suas distâncias
-dicionario_cidade = {nome: (distancia, visinhos) for nome, distancia, visinhos in grafo}
+class Cidade:
+    def __init__(self, nome, distancia, vizinhos):
+        self.nome = nome
+        self.distancia = distancia
+        self.vizinhos = vizinhos
 
-#listas/armazenando a lista do grafo em cidades
-cidades = [Cidade(nome, distancia, visinhos) for nome, distancia, visinhos in grafo]
+    #criando um dicionario para armazenar as cidades e suas distâncias
+    @staticmethod
+    def dicionario_cidade(dados_grafo):
+        return {nome: (distancia, vizinhos) for nome, distancia, vizinhos in dados_grafo}
+    
+    @staticmethod
+    #listas/armazenando a lista do grafo em cidades
+    def cidades(dados_grafo):
+        return [Cidade(nome, distancia, vizinhos) for nome, distancia, vizinhos in dados_grafo]
+        
+dicionario = Cidade.dicionario_cidade(grafo)
+mapa_cidades = Cidade.cidades(grafo)
 algoritmos = ['gulosa', 'a*']
 
 #escolha do algoritmo:
@@ -56,24 +62,12 @@ print("Algoritmo selecionado: ", algoritmos[escolha])
 
 #menu de cidades
 print("\n====== Lista de cidades: ======")
-for cidade in cidades:
+for cidade in mapa_cidades:
     print(cidade.nome)
 
 #Pega a primeira cidade
 origem = input("Por onde quer começar? ").lower()
 destino = "Bucharest"
-
-def validar_cidade(origem):
-    for cidade in cidades:
-        if cidade.nome.lower() == origem:
-            origem = cidade
-            print("Cidade de origem selecionada:", origem.nome)
-            break
-        else : 
-            print("cidade nao encontrada")
-            return 1
-
-# print(origem)
 
 def busca_a_estrela(origem, destino):
     print("Buscando estrela...")
@@ -81,40 +75,40 @@ def busca_a_estrela(origem, destino):
     #h -> valor da heurística do nó n até um nó objetivo.
 
 
-def busca_gulosa(origem):
-    atual = origem.nome
-    cidade_visitada = []
+def busca_gulosa(origem, destino):
+    atual = origem
+    cidades_visitadas = [atual]
+    caminho_final = float('inf')
 
-    menor_distancia = float('inf')
-
-    lista_visinhos = []
+    caminho = []
     while atual != destino:
-        visinhos = dicionario_cidade[atual][1]
+        # try:
 
-        for v in visinhos:
-            if v in cidade_visitada:
+        vizinhos = dicionario[atual][1]
+
+        for v in vizinhos:
+            if v in cidades_visitadas: #evita cidades não visitadas
                 continue
-            menor_distancia = dicionario_cidade[v][0]
-            lista_visinhos.append((menor_distancia, v))
+            caminho_final = dicionario[v][0]
+            caminho.append((caminho_final, v))
         
-        lista_visinhos.sort()
-        menor_distancia = lista_visinhos[0][1]
+        caminho.sort()
+        caminho_final = caminho[0][1]
 
-        atual = menor_distancia
-        cidade_visitada.append(atual)
+        atual = caminho_final
+        cidades_visitadas.append(atual)
         print("Próxima cidade escolhida:", atual)
     print("Chegou em Bucareste!")
 
-    if len(cidade_visitada) > 0:
+    if len(cidades_visitadas) > 0:
         print("cidades visitadas: ")
-        for c in cidade_visitada:
+        for c in cidades_visitadas:
             print(c)
     else: 
         print("Nenhuma cidade foi visitada.")
 
 #direção das escolhas dos algoritmos
-if validar_cidade(origem):
-    if escolha == 0:
-        busca_gulosa(origem)
-    else:
-        busca_a_estrela(origem)
+if escolha == 0:
+    busca_gulosa(origem, destino)
+else:
+    busca_a_estrela(origem)
