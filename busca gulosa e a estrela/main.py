@@ -66,7 +66,7 @@ for cidade in mapa_cidades:
     print(cidade.nome)
 
 #Pega a primeira cidade
-origem = input("Por onde quer começar? ").lower()
+origem = input("Por onde quer começar? ").title()
 destino = "Bucharest"
 
 def busca_a_estrela(origem, destino):
@@ -76,33 +76,35 @@ def busca_a_estrela(origem, destino):
 
 
 def busca_gulosa(origem, destino):
-    atual = origem
-    cidades_visitadas = [atual]
-    caminho_final = float('inf')
-
-    caminho = []
-    while atual != destino:
-        # try:
-
-        vizinhos = dicionario[atual][1]
+    cidade_atual = origem
+    destino_aux = destino
+    rota = [cidade_atual] #cidades visitadas
+    
+    while cidade_atual != destino_aux:
+        vizinhos = dicionario[cidade_atual][1]
+        caminho = []
 
         for v in vizinhos:
-            if v in cidades_visitadas: #evita cidades não visitadas
-                continue
-            caminho_final = dicionario[v][0]
-            caminho.append((caminho_final, v))
+            if v not in rota: #evita cidades visitadas
+                distancia_h = dicionario[v][0] #pega a heurística h(n) (caminho em linha reta)
+                caminho.append((distancia_h, v))
         
-        caminho.sort()
-        caminho_final = caminho[0][1]
+        if not caminho:
+            print("Caminho sem saída")
+            break
 
-        atual = caminho_final
-        cidades_visitadas.append(atual)
-        print("Próxima cidade escolhida:", atual)
+        caminho.sort()
+        
+        melhor_escolha = caminho[0][1]
+
+        cidade_atual = melhor_escolha
+        rota.append(cidade_atual)
+        print("Próxima cidade escolhida:", cidade_atual)
     print("Chegou em Bucareste!")
 
-    if len(cidades_visitadas) > 0:
+    if len(rota) > 0:
         print("cidades visitadas: ")
-        for c in cidades_visitadas:
+        for c in rota:
             print(c)
     else: 
         print("Nenhuma cidade foi visitada.")
