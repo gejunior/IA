@@ -58,8 +58,6 @@ origem = input("Por onde quer começar? ").title()
 destino = "Bucharest"
 
 def busca_a_estrela(origem, destino):
-    # cidade_atual = origem
-
     #inicializa Q com o no de busca
     #formato: (f, g, estado_atual, caminho)
     h_inicial = dicionario[origem][0]
@@ -120,8 +118,9 @@ def busca_gulosa(origem, destino):
         melhor_escolha = caminho_opcoes[0][1]
         cidade_atual = melhor_escolha
         rota.append(cidade_atual)
+    
     print("Chegou em Bucareste!")
-
+    print(f"passos: {len(rota)}")
     print(f"Rota { '->'.join(rota)}")
 
 #direção das escolhas dos algoritmos
