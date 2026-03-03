@@ -1,17 +1,5 @@
-# Apenas as distâncias de todas as cidades em linha reta até Bucareste são consideradas. Essas distâncias estão na tabela. Ou seja, não se sabe a distância de Arad a Cralova em linha reta, por exemplo, e tudo bem.
 
-# As distâncias entre os vizinhos são as estradas do mapa, ou seja, as arestas do grafo. As cidades são os nós do grafo.
-
-# OK - Insira as cidades manualmente no código.
-# A busca gulosa não é a busca cega (que varreria todos os nós), portanto há pelo menos uma função heurística simples, a menor distância do vizinho até Bucareste.
-
-# OK - A entrada do programa pelo usuário é apenas a cidade da qual desejo partir (origem) para chegar em Bucareste (destino) e o algoritmo de busca escolhido (gulosa ou A*).
-
-# A saída do programa é o caminho mostrando todas as cidades da origem até Bucareste.
-
-# OK - Pode ser feito em Java, Python ou C.
-
-# Enviar o código pelo Moodle para ser analisado.
+##### testar inserindo uma nova cidade #####
 
 grafo = [
     ("Arad", 366, ["Zerind", "Sibiu", "Timisoara"]),
@@ -70,47 +58,74 @@ origem = input("Por onde quer começar? ").title()
 destino = "Bucharest"
 
 def busca_a_estrela(origem, destino):
-    print("Buscando estrela...")
-    #g -> custo do caminho do nó inicial até o nó n
-    #h -> valor da heurística do nó n até um nó objetivo.
+    # cidade_atual = origem
+
+    #inicializa Q com o no de busca
+    #formato: (f, g, estado_atual, caminho)
+    h_inicial = dicionario[origem][0]
+    q = [(h_inicial, 0, origem, [origem])]
+    visitados = []
+
+    #se q esta vazio, interrompe
+    while len(q) > 0:
+        #escolhendo o menor elemento de Q
+        q.sort()
+
+        #g -> custo do caminho do nó inicial até o nó n
+        #h -> valor da heurística do nó n até um nó objetivo.
+        f, g, n, caminho_ate_n = q.pop(0)
+
+        if n == destino:
+            print(f"passos: {g}")
+            print(f"Rota { '->'.join(caminho_ate_n)}")
+            return
+        
+        if n not in visitados:
+            visitados.append(n)
+            vizinhos = dicionario[n][1]
+
+            for descendente in vizinhos:
+                if descendente not in visitados:
+                    g_novo = g + 1
+                    h_novo = dicionario[descendente][0]
+                    f_novo = g_novo + h_novo
+
+                    novo_caminho = caminho_ate_n + [descendente]
+
+                    q.append([f_novo, g_novo, descendente, novo_caminho])
 
 
 def busca_gulosa(origem, destino):
     cidade_atual = origem
-    destino_aux = destino
-    rota = [cidade_atual] #cidades visitadas
+    rota = [cidade_atual]
     
-    while cidade_atual != destino_aux:
+    while cidade_atual != destino:
+        if cidade_atual not in dicionario:
+            print("Cidade nao encontrada!")
+            return
+
         vizinhos = dicionario[cidade_atual][1]
-        caminho = []
+        caminho_opcoes = []
 
         for v in vizinhos:
             if v not in rota: #evita cidades visitadas
                 distancia_h = dicionario[v][0] #pega a heurística h(n) (caminho em linha reta)
-                caminho.append((distancia_h, v))
+                caminho_opcoes.append((distancia_h, v))
         
-        if not caminho:
+        if not caminho_opcoes:
             print("Caminho sem saída")
             break
 
-        caminho.sort()
-        
-        melhor_escolha = caminho[0][1]
-
+        caminho_opcoes.sort()
+        melhor_escolha = caminho_opcoes[0][1]
         cidade_atual = melhor_escolha
         rota.append(cidade_atual)
-        print("Próxima cidade escolhida:", cidade_atual)
     print("Chegou em Bucareste!")
 
-    if len(rota) > 0:
-        print("cidades visitadas: ")
-        for c in rota:
-            print(c)
-    else: 
-        print("Nenhuma cidade foi visitada.")
+    print(f"Rota { '->'.join(rota)}")
 
 #direção das escolhas dos algoritmos
 if escolha == 0:
     busca_gulosa(origem, destino)
 else:
-    busca_a_estrela(origem)
+    busca_a_estrela(origem, destino)
