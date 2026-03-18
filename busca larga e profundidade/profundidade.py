@@ -40,6 +40,27 @@ grafo = [
     ("R", ["O"])
 ]
 
+grafo_nome = [
+    ("A", ["B"]),
+    ("G", ["A", "C"]),
+    ("C", ["B", "D", "F"]),
+    ("D", ["C","G"]),
+    ("E", ["F"]),
+    ("F", ["C", "E", "G"]),
+    ("G", ["D", "F", "H", "I"]),
+    ("H", ["G", "J", "L"]),
+    ("I", ["G", "M", "K"]),
+    ("J", ["H", "L"]),
+    ("K", ["I", "O"]),
+    ("L", ["H", "J", "N"]),
+    ("M", ["I", "P", "Q"]),
+    ("N", ["L"]),
+    ("O", ["K", "Q", "R"]),
+    ("P", ["M"]),
+    ("Q", ["M", "O"]),
+    ("R", ["O"])
+]
+
 class No:
     def __init__(self, nome, vizinhos):
         self.nome = nome
@@ -57,8 +78,6 @@ class No:
 dicionario = No.dicionario_grafo(grafo)
 mapa_nos = No.lista_nos(grafo)
 
-# =========== Algoritmo DFS (Busca em Profundidade) ===========
-
 def busca_em_profundidade(origem, destino):
     # Pilha armazena (no_atual, caminho_percorrido) - LIFO
     pilha = [(origem, [origem])]
@@ -70,7 +89,7 @@ def busca_em_profundidade(origem, destino):
 
         if n == destino:
             print(f"Caminho encontrado: {' -> '.join(caminho)}")
-            print(f"Ordem de visitação: {', '.join(visitados)}\n")
+            print(f"Nós visitados: {', '.join(visitados)}\n")
             return
 
         if n not in visitados:
@@ -84,16 +103,11 @@ def busca_em_profundidade(origem, destino):
 
     print("Caminho não encontrado.")
 
-# =========== Menu e Main (Seu Padrão Consolidado) ===========
-
 def menu():
-    print("== Menu Busca em Profundidade (DFS) ==")
+    print("== Menu Busca em Profundidade ==")
     print("1 - Iniciar Busca")
     print("0 - Sair")
-    try:
-        return int(input("\nDigite a opção: "))
-    except:
-        return -1
+    return int(input("\nDigite a opção: "))
 
 def main():
     while True:
