@@ -1,28 +1,29 @@
-
-##### testar inserindo uma nova cidade #####
-
+# Estrutura: cidade, heuristica, vizinho, distancia
 grafo = [
-    ("Arad", 366, ["Zerind", "Sibiu", "Timisoara"]),
-    ("Bucharest", 0, ["Urziceni", "Pitesti", "Giurgiu", "Fagaras"]),
-    ("Craiova", 160, ["Dobreta", "Rimnicu Vilcea", "Pitesti"]),
-    ("Dobreta", 242, ["Mehadia", "Craiova"]),
-    ("Eforie", 161, ["Hirsova"]),
-    ("Fagaras", 176, ["Sibiu", "Bucharest"]),
-    ("Giurgiu", 77, ["Bucharest"]),
-    ("Hirsova", 151, ["Urziceni", "Eforie"]),
-    ("Iasi", 226, ["Neamt", "Vaslui"]),
-    ("Lugoj", 244, ["Timisoara", "Mehadia"]),
-    ("Mehadia", 241, ["Lugoj", "Dobreta"]),
-    ("Neamt", 234, ["Iasi"]),
-    ("Oradea", 380, ["Zerind", "Sibiu"]),
-    ("Pitesti", 100, ["Rimnicu Vilcea", "Craiova", "Bucharest"]),
-    ("Rimnicu Vilcea", 193, ["Sibiu", "Craiova", "Pitesti"]),
-    ("Sibiu", 253, ["Arad", "Oradea", "Fagaras", "Rimnicu Vilcea"]),
-    ("Timisoara", 329, ["Arad", "Lugoj"]),
-    ("Urziceni", 80, ["Bucharest", "Vaslui", "Hirsova"]),
-    ("Vaslui", 199, ["Iasi", "Urziceni"]),
-    ("Zerind", 374, ["Oradea", "Arad"])
+    ("Arad", 366, [("Zerind", 75), ("Sibiu", 140), ("Timisoara", 118)]),
+    ("Bucharest", 0, [("Urziceni", 85), ("Pitesti", 101), ("Giurgiu", 90), ("Fagaras", 211)]),
+    ("Craiova", 160, [("Dobreta", 120), ("Rimnicu Vilcea", 146), ("Pitesti", 138)]),
+    ("Dobreta", 242, [("Mehadia", 75), ("Craiova", 120)]),
+    ("Eforie", 161, [("Hirsova", 86)]),
+    ("Fagaras", 176, [("Sibiu", 99), ("Bucharest", 211)]),
+    ("Giurgiu", 77, [("Bucharest", 90)]),
+    ("Hirsova", 151, [("Urziceni", 98), ("Eforie", 86)]),
+    ("Iasi", 226, [("Neamt", 87), ("Vaslui", 92)]),
+    ("Lugoj", 244, [("Timisoara", 111), ("Mehadia", 70)]),
+    ("Mehadia", 241, [("Lugoj", 70), ("Dobreta", 75)]),
+    ("Neamt", 234, [("Iasi", 87)]),
+    ("Oradea", 380, [("Zerind", 71), ("Sibiu", 151)]),
+    ("Pitesti", 100, [("Rimnicu Vilcea", 97), ("Craiova", 138), ("Bucharest", 101)]),
+    ("Rimnicu Vilcea", 193, [("Sibiu", 80), ("Craiova", 146), ("Pitesti", 97)]),
+    ("Sibiu", 253, [("Arad", 140), ("Oradea", 151), ("Fagaras", 99), ("Rimnicu Vilcea", 80)]),
+    ("Timisoara", 329, [("Arad", 118), ("Lugoj", 111)]),
+    ("Urziceni", 80, [("Bucharest", 85), ("Vaslui", 142), ("Hirsova", 98)]),
+    ("Vaslui", 199, [("Iasi", 92), ("Urziceni", 142)]),
+    ("Zerind", 374, [("Oradea", 71), ("Arad", 75)])
 ]
+
+#adicionando uma cidade
+grafo.append(("Prova City", 280, [("Dobreta", 100), ("Mehadia", 110)]))
 
 class Cidade:
     def __init__(self, nome, distancia, vizinhos):
@@ -36,26 +37,14 @@ class Cidade:
         return {nome: (distancia, vizinhos) for nome, distancia, vizinhos in dados_grafo}
     
     @staticmethod
-    #listas/armazenando a lista do grafo em cidades
+    #armazenando a lista do grafo em cidades
     def cidades(dados_grafo):
         return [Cidade(nome, distancia, vizinhos) for nome, distancia, vizinhos in dados_grafo]
         
 dicionario = Cidade.dicionario_cidade(grafo)
 mapa_cidades = Cidade.cidades(grafo)
-algoritmos = ['gulosa', 'a*']
 
-#escolha do algoritmo:
-escolha = int(input("Gulosa = 1 ou A* = 2 \nDigite o algoritmo: "))-1
-print("Algoritmo selecionado: ", algoritmos[escolha])
-
-#menu de cidades
-print("\n====== Lista de cidades: ======")
-for cidade in mapa_cidades:
-    print(cidade.nome)
-
-#Pega a primeira cidade
-origem = input("Por onde quer começar? ").title()
-destino = "Bucharest"
+# =========== inicio do programa ===============
 
 def busca_a_estrela(origem, destino):
     #inicializa Q com o no de busca
@@ -64,8 +53,7 @@ def busca_a_estrela(origem, destino):
     q = [(h_inicial, 0, origem, [origem])]
     visitados = []
 
-    #se q esta vazio, interrompe
-    while len(q) > 0:
+    while q:
         #escolhendo o menor elemento de Q
         q.sort()
 
@@ -74,23 +62,24 @@ def busca_a_estrela(origem, destino):
         f, g, n, caminho_ate_n = q.pop(0)
 
         if n == destino:
-            print(f"passos: {g}")
+            print(f"Custo total: {g}")
             print(f"Rota { '->'.join(caminho_ate_n)}")
+            print(f"Cidades visitadas { '->'.join(visitados)}\n")
             return
         
         if n not in visitados:
+            print(f"Visitando {n} (f: {f})")
             visitados.append(n)
             vizinhos = dicionario[n][1]
 
-            for descendente in vizinhos:
-                if descendente not in visitados:
-                    g_novo = g + 1
-                    h_novo = dicionario[descendente][0]
+            for v_nome, v_distancia in vizinhos:
+                if v_nome not in visitados:
+                    g_novo = g + v_distancia
+                    h_novo = dicionario[v_nome][0]
                     f_novo = g_novo + h_novo
-
-                    novo_caminho = caminho_ate_n + [descendente]
-
-                    q.append([f_novo, g_novo, descendente, novo_caminho])
+                    novo_caminho = caminho_ate_n + [v_nome]
+                    q.append([f_novo, g_novo, v_nome, novo_caminho])
+    
 
 
 def busca_gulosa(origem, destino):
@@ -98,33 +87,72 @@ def busca_gulosa(origem, destino):
     rota = [cidade_atual]
     
     while cidade_atual != destino:
-        if cidade_atual not in dicionario:
-            print("Cidade nao encontrada!")
-            return
-
         vizinhos = dicionario[cidade_atual][1]
         caminho_opcoes = []
 
-        for v in vizinhos:
-            if v not in rota: #evita cidades visitadas
-                distancia_h = dicionario[v][0] #pega a heurística h(n) (caminho em linha reta)
-                caminho_opcoes.append((distancia_h, v))
+        if cidade_atual not in dicionario:
+            print("Cidade nao encontrada!")
+            return
+        
+        for v_nome, v_distancia in vizinhos:
+            if v_nome not in rota: #evita cidades visitadas
+                distancia_h = dicionario[v_nome][0] #pega a heurística h(n) (caminho em linha reta)
+                caminho_opcoes.append((distancia_h, v_nome))
         
         if not caminho_opcoes:
             print("Caminho sem saída")
             break
 
         caminho_opcoes.sort()
-        melhor_escolha = caminho_opcoes[0][1]
-        cidade_atual = melhor_escolha
+        cidade_atual = caminho_opcoes[0][1]
+        print(f"Indo para {cidade_atual} (h: {dicionario[cidade_atual][0]})") #indicando a proxima
         rota.append(cidade_atual)
     
-    print("Chegou em Bucareste!")
-    print(f"passos: {len(rota)}")
-    print(f"Rota { '->'.join(rota)}")
+    # print(f"Chegou em {origem}!")
+    # print(f"passos: {len(rota)}")
+    print(f"Rota Final: { '->'.join(rota)}\n")
 
-#direção das escolhas dos algoritmos
-if escolha == 0:
-    busca_gulosa(origem, destino)
-else:
-    busca_a_estrela(origem, destino)
+def menu():
+    print("== Menu ==")
+    print("1 - Gulosa ")
+    print("2 - A* ")
+    print("0 - Sair")
+
+    op = int(input("\nDigite a opcao: ")) 
+    return op
+
+def main():
+    # escolha = -1
+
+    while True:
+        escolha = menu()
+        
+        if escolha == 0:
+            print("Encerrando sistema")
+            break
+
+        #menu de cidades
+        print("\n====== Lista de cidades: ======")
+        for cidade in mapa_cidades:
+            print(cidade.nome)
+
+        #Pega a primeira cidade
+        origem = input("\nPor onde quer começar? ").title()
+        #definir o destino
+        destino = "Bucharest"
+        # destino = input("\nQual é o destino? ").title()
+
+        #direção das escolhas dos algoritmos
+        if escolha == 1:
+            print("Busca Gulosa ")
+            busca_gulosa(origem, destino)
+        elif escolha == 2:
+            print("Busca A* ")
+            busca_a_estrela(origem, destino)
+        else:
+            print("Opcao invalida.")
+    
+    # print("finalizando o programa.")
+        
+if __name__ == "__main__":
+    main()
