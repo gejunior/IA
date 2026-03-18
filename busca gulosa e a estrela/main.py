@@ -117,13 +117,9 @@ def menu():
     print("1 - Gulosa ")
     print("2 - A* ")
     print("0 - Sair")
-
-    op = int(input("\nDigite a opcao: ")) 
-    return op
+    return int(input("\nDigite a opcao: ")) 
 
 def main():
-    # escolha = -1
-
     while True:
         escolha = menu()
         
