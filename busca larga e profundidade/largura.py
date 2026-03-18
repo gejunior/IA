@@ -53,8 +53,9 @@ class No:
     def lista_nos(dados):
         return [No(nome, vizinhos) for nome, vizinhos in dados]
 
-dicionario = No.dicionario_grafo(dados_grafo)
-mapa_nos = No.lista_nos(dados_grafo)
+## <============ DEFINIR o Grafo aqui ===============>
+dicionario = No.dicionario_grafo(grafo)
+mapa_nos = No.lista_nos(grafo)
 
 
 def busca_largura(origem, destino):
@@ -69,7 +70,7 @@ def busca_largura(origem, destino):
 
         if n == destino:
             print(f"Caminho encontrado: {' -> '.join(caminho)}")
-            print(f"Cidades/Nós visitados: {', '.join(visitados)}")
+            print(f"Nós visitados: {', '.join(visitados)}")
             return
 
         if n not in visitados:
@@ -102,8 +103,10 @@ def main():
                 print(no.nome, end=" | ")
             print()
 
-            origem = input("\nNó de Origem: ")
-            destino = input("Nó de Destino (ex: 13): ")
+## <=========== DEFINIR o tipo aqui: 
+            # origem = input("\nNó de Origem: ")
+            origem = input("\nNó de Origem: ").title() 
+            destino = input("Nó de Destino (ex: R): ").title()
 
             if origem in dicionario and destino in dicionario:
                 busca_largura(origem, destino)

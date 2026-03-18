@@ -1,51 +1,126 @@
-from collections import deque
+# Estrutura do Grafo: Nome e Lista de Vizinhos (Estilo IA)
+dados_grafo = [
+    ("3", ["18", "4", "17"]),
+    ("1", ["15", "14"]),
+    ("14", ["1", "16", "13", "12"]),
+    ("16", ["14"]),
+    ("15", ["1", "2"]),
+    ("12", ["14"]),
+    ("13", ["14", "10"]),
+    ("2", ["15", "17"]),
+    ("17", ["2", "3"]),
+    ("18", ["3"]),
+    ("4", ["3", "5"]),
+    ("5", ["4", "9", "6"]),
+    ("9", ["10", "5"]),
+    ("10", ["13", "9"]),
+    ("6", ["5", "7"]),
+    ("7", ["6", "19"]),
+    ("19", ["7"])
+]
+
+grafo = [
+    ("A", ["B"]),
+    ("B", ["A", "C"]),
+    ("C", ["B", "D", "F"]),
+    ("D", ["C","G"]),
+    ("E", ["F"]),
+    ("F", ["C", "E", "G"]),
+    ("G", ["D", "F", "H", "I"]),
+    ("H", ["G", "J", "L"]),
+    ("I", ["G", "M", "K"]),
+    ("J", ["H", "L"]),
+    ("K", ["I", "O"]),
+    ("L", ["H", "J", "N"]),
+    ("M", ["I", "P", "Q"]),
+    ("N", ["L"]),
+    ("O", ["K", "Q", "R"]),
+    ("P", ["M"]),
+    ("Q", ["M", "O"]),
+    ("R", ["O"])
+]
 
 class No:
-    def __init__(self, valor):
-        self.valor = valor
-        self.vizinhos = [] 
+    def __init__(self, nome, vizinhos):
+        self.nome = nome
+        self.vizinhos = vizinhos
 
-class Grafo:
-    def __init__(self, raiz):
-        self.raiz = raiz
+    @staticmethod
+    def dicionario_grafo(dados):
+        return {nome: vizinhos for nome, vizinhos in dados}
 
-    def conectar(self, no_novo, no_alvo = None):
-        if no_alvo is None:
-            no_alvo = self.raiz
-        
-        no_novo.vizinhos.append(no_alvo)
-        no_alvo.vizinhos.append(no_novo)
-        return no_novo
-    
-    def buscar_em_largura(self, valor_procurado):
-        visitados = set()
-        fila = deque([self.raiz])
-        visitados.add(self.raiz.valor)
+    @staticmethod
+    def lista_nos(dados):
+        return [No(nome, vizinhos) for nome, vizinhos in dados]
 
-        while fila:
-            atual = fila.popleft()
-            print(f"{atual.valor} -> ", end="")
+## <============ DEFINIR o Grafo aqui ===============>
+dicionario = No.dicionario_grafo(grafo)
+mapa_nos = No.lista_nos(grafo)
 
-            if atual.valor == valor_procurado:
-                print("Encontrou!!")
-                return atual
+# =========== Algoritmo DFS (Busca em Profundidade) ===========
+
+def busca_em_profundidade(origem, destino):
+    # Pilha armazena (no_atual, caminho_percorrido) - LIFO
+    pilha = [(origem, [origem])]
+    visitados = []
+
+    while pilha:
+        # pop() remove o último elemento inserido (o topo da pilha)
+        n, caminho = pilha.pop() 
+
+        if n == destino:
+            print(f"Caminho encontrado: {' -> '.join(caminho)}")
+            print(f"Ordem de visitação: {', '.join(visitados)}\n")
+            return
+
+        if n not in visitados:
+            print(f"Visitando {n}") # Monitoramento visual
+            visitados.append(n)
             
-            for vizinho in atual.vizinhos:
-                if vizinho.valor not in visitados:
-                    visitados.add(vizinho.valor)
-                    fila.append(vizinho)
-        print("Não encontrado")
-        return None
+            # Adicionando vizinhos na pilha
+            for vizinho in dicionario.get(n, []):
+                if vizinho not in visitados:
+                    pilha.append((vizinho, caminho + [vizinho]))
 
-#criando os nós
-h = No("H")
-grafo = Grafo(h)
+    print("Caminho não encontrado.")
 
-e = grafo.conectar(No("E"), h)
-f = grafo.conectar(No("F"), h)
-j = grafo.conectar(No("J"), h)
-k = grafo.conectar(No("K"), h)
-i = grafo.conectar(No("I"), e)
-grafo.conectar(i, k)
+# =========== Menu e Main (Seu Padrão Consolidado) ===========
 
-grafo.buscar_em_largura("I")
+def menu():
+    print("== Menu Busca em Profundidade (DFS) ==")
+    print("1 - Iniciar Busca")
+    print("0 - Sair")
+    try:
+        return int(input("\nDigite a opção: "))
+    except:
+        return -1
+
+def main():
+    while True:
+        escolha = menu()
+
+        if escolha == 0:
+            print("Encerrando sistema...")
+            break
+        
+        if escolha == 1:
+            print("\n====== Lista de Nós Disponíveis: ======")
+            for no in mapa_nos:
+                print(no.nome, end=" | ")
+            print()
+
+## <=========== Definir o tipo aqui: .title() se for string e sem caso for inteiro.
+            # origem = input("\nNó de Origem: ")
+            origem = input("\nNó de Origem: ").title() ## <============ Definir o tipo aqui
+            # destino = input("Nó de Destino: ")
+            destino = input("Nó de Destino: ").title() 
+
+            if origem in dicionario and destino in dicionario:
+                busca_em_profundidade(origem, destino)
+            else:
+                print("Erro: Nó não encontrado.")
+        else:
+            print("Opção inválida.")
+
+if __name__ == "__main__":
+    main()
