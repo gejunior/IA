@@ -1,0 +1,9 @@
+== info ===
+vilao = objetivo
+herói = c1 e c2
+bônus = p1 e p2
+
+regra 1 - Carros (C1 e C2), objetivo (O) - quem chegar primeiro ganha e o jogo acaba imediatamente.
+
+regra # - se carro1 esta em p1 = move objetivo pra esquerda (se n for possível mover o objetivo, perde poder)
+regra # - se carro2 esta em p2 = move objetivo pra direita (se n for possível mover o objetivo, perde poder)

@@ -1,64 +1,22 @@
-# Estrutura do Grafo: Nome e Lista de Vizinhos (Estilo IA)
-dados_grafo = [
-    ("3", ["18", "4", "17"]),
+# Estrutura: nome e vizinhos
+grafo = [
     ("1", ["15", "14"]),
-    ("14", ["1", "16", "13", "12"]),
-    ("16", ["14"]),
-    ("15", ["1", "2"]),
-    ("12", ["14"]),
-    ("13", ["14", "10"]),
     ("2", ["15", "17"]),
-    ("17", ["2", "3"]),
-    ("18", ["3"]),
+    ("3", ["18", "4", "17"]),
     ("4", ["3", "5"]),
     ("5", ["4", "9", "6"]),
-    ("9", ["10", "5"]),
-    ("10", ["13", "9"]),
     ("6", ["5", "7"]),
     ("7", ["6", "19"]),
+    ("9", ["10", "5"]),
+    ("10", ["13", "9"]),
+    ("12", ["14"]),
+    ("13", ["14", "10"]),
+    ("14", ["1", "16", "13", "12"]),
+    ("15", ["1", "2"]),
+    ("16", ["14"]),
+    ("17", ["2", "3"]),
+    ("18", ["3"]),
     ("19", ["7"])
-]
-
-grafo = [
-    ("A", ["B"]),
-    ("B", ["A", "C"]),
-    ("C", ["B", "D", "F"]),
-    ("D", ["C","G"]),
-    ("E", ["F"]),
-    ("F", ["C", "E", "G"]),
-    ("G", ["D", "F", "H", "I"]),
-    ("H", ["G", "J", "L"]),
-    ("I", ["G", "M", "K"]),
-    ("J", ["H", "L"]),
-    ("K", ["I", "O"]),
-    ("L", ["H", "J", "N"]),
-    ("M", ["I", "P", "Q"]),
-    ("N", ["L"]),
-    ("O", ["K", "Q", "R"]),
-    ("P", ["M"]),
-    ("Q", ["M", "O"]),
-    ("R", ["O"])
-]
-
-grafo_nome = [
-    ("A", ["B"]),
-    ("G", ["A", "C"]),
-    ("C", ["B", "D", "F"]),
-    ("D", ["C","G"]),
-    ("E", ["F"]),
-    ("F", ["C", "E", "G"]),
-    ("G", ["D", "F", "H", "I"]),
-    ("H", ["G", "J", "L"]),
-    ("I", ["G", "M", "K"]),
-    ("J", ["H", "L"]),
-    ("K", ["I", "O"]),
-    ("L", ["H", "J", "N"]),
-    ("M", ["I", "P", "Q"]),
-    ("N", ["L"]),
-    ("O", ["K", "Q", "R"]),
-    ("P", ["M"]),
-    ("Q", ["M", "O"]),
-    ("R", ["O"])
 ]
 
 class No:
@@ -74,7 +32,6 @@ class No:
     def lista_nos(dados):
         return [No(nome, vizinhos) for nome, vizinhos in dados]
 
-## <============ DEFINIR o Grafo aqui ===============>
 dicionario = No.dicionario_grafo(grafo)
 mapa_nos = No.lista_nos(grafo)
 
@@ -123,11 +80,8 @@ def main():
                 print(no.nome, end=" | ")
             print()
 
-## <=========== Definir o tipo aqui: 
-# .title() se for string e sem caso for inteiro.
-
-            origem = input("\nNó de Origem: ").title()
-            destino = input("Nó de Destino: ").title() 
+            origem = input("\nNó de Origem: ")
+            destino = input("Nó de Destino (ex: 19): ")
 
             if origem in dicionario and destino in dicionario:
                 busca_em_profundidade(origem, destino)
